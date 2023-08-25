@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Login from "../Login/Login";
 import { getAuth, signOut } from "firebase/auth";
 import "./Home.css";
+import { auth } from "../../firebase";
 
 const Home = (props) => {
   const [logout, setLogout] = useState(false);
+  const [userName, setUserName] = useState('')
 
   const handleLogout = () => {
     const auth = getAuth();
@@ -17,6 +19,14 @@ const Home = (props) => {
         // An error happened.
       });
   };
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserName(user.displayName);
+      } else setUserName("");
+    });
+  }, [auth]);
   return (
     <>
       <nav class="nav">
@@ -25,12 +35,12 @@ const Home = (props) => {
           src="https://raw.githubusercontent.com/JamminCoder/grid_navbar/master/menu.svg"
           alt="Collapse"
         />
-        <a class="nav__brand">AWESOME</a>
+        <a class="nav__brand">{userName ? `Welcome - ${userName}` : `Please Login`}</a>
 
         <div class="nav__collapsable">
-          <a href="#">Home</a>
-          <a href="#">Upload Photos</a>
-          <a href="#">Show</a>
+          <a href=""><Link to="/">Home</Link></a>
+          <a href=""><Link to="/uploadphotos">Upload Photos</Link></a>
+          <a href=""><Link to="/showphotos">Show</Link></a>
 
           <div class="nav__cta">
             {logout ? (
@@ -51,15 +61,6 @@ const Home = (props) => {
           </div>
         </div>
       </nav>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <h2 className="text-center">{props.name ? `Welcome - ${props.name}` : `Please Login`}</h2>
-     
-            
     </>
   );
 };

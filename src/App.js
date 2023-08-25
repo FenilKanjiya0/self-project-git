@@ -5,24 +5,22 @@ import Login from "./Components/Login/Login";
 import { Route, Routes } from "react-router-dom";
 import Home from "./Components/Home/Home";
 import { useEffect, useState } from "react";
-import { auth } from "./firebase";
+
+import UploadPhotos from "./Components/UploadPhotos/UploadPhotos";
+import ShowPhotos from "./Components/ShowPhotos/ShowPhotos";
 
 function App() {
   const [userName, setUserName] = useState("");
 
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserName(user.displayName);
-      } else setUserName("");
-    });
-  }, [auth]);
+ 
   return (
     <>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Ragistration />} />
         <Route path="/" element={<Home name={userName}/>} />
+        <Route path="/uploadphotos" element={<UploadPhotos />} />
+        <Route path="/showphotos" element={<ShowPhotos />} />
       </Routes>
     </>
   );
