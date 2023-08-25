@@ -1,117 +1,74 @@
 import React, { useState } from "react";
+import styles from "./Ragistration.module.css";
+import InputControls from "../InputControls/InputControls";
+import { Link, useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { auth } from "../../firebase";
 
 const Ragistration = () => {
-  const [user, setUser] = useState({
+  const [userValues, setUserValues] = useState({
     name: "",
-    address: "",
     email: "",
     password: "",
   });
+  const [errMsg, setErrMsg] = useState('');
+  const navigate = useNavigate();
 
-  let name, value;
-  const ragister = (e) => {
-    name = e.target.name;
-    value = e.target.value;
-
-    setUser({ ...user, [name]: value });
-  };
-
-  const postData = async (e) => {
-    e.preventDefault();
-    try {
-      const { name, address, email, password } = user;
-
-      const res = await fetch(
-        "https://git-practice-b549f-default-rtdb.firebaseio.com/dummy.json",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            address,
-            email,
-            password,
-          }),
-        }
-      );
-      if (res) {
-        setUser({
-          name: "",
-          address: "",
-          email: "",
-          password: "",
-        });
-        alert("ragister successufull");
-      }
-    } catch (error) {
-      console.log(error.message);
+  const handleSubmit = () => {
+    if(!userValues.name && !userValues.email && !userValues.pass) {
+      setErrMsg('Fill all Fields')
+      return;
     }
-  };
+    setErrMsg('');
+
+    createUserWithEmailAndPassword(auth, userValues.email, userValues.password).then(async(res) => {
+      console.log(res)
+      const user = res.user
+      await updateProfile(user, {
+        displayName: userValues.name
+      })
+      navigate('/login')
+    })
+    .catch((err) => setErrMsg(err.message))
+   
+  }
   return (
     <>
-      <div className="container my-5">
-        <h3>Ragistration Form</h3>
-        <form method="POST" onSubmit={postData}>
-          <div className="row">
-            <div className="col-6 my-3">
-              <div class="mb-3">
-                <input
-                  placeholder="Enter your name"
-                  type="text"
-                  class="form-control"
-                  name="name"
-                  value={user.name}
-                  onChange={ragister}
-                  required
-                />
-              </div>
-            </div>
-            <div className="col-6 my-3">
-              <div class="mb-3">
-                <input
-                  placeholder="Enter Address"
-                  type="text"
-                  class="form-control"
-                  name="address"
-                  value={user.address}
-                  onChange={ragister}
-                  required
-                />
-              </div>
-            </div>
-            <div className="col-6 my-3">
-              <div class="mb-3">
-                <input
-                  placeholder="Enter Email"
-                  type="email"
-                  class="form-control"
-                  name="email"
-                  value={user.email}
-                  onChange={ragister}
-                  required
-                />
-              </div>
-            </div>
-            <div className="col-6 my-3">
-              <div class="mb-3">
-                <input
-                  placeholder="Password"
-                  type="text"
-                  class="form-control"
-                  name="password"
-                  value={user.password}
-                  onChange={ragister}
-                  required
-                />
-              </div>
-            </div>
-            <button className="btn btn-primary" type="submit">
-              Submit
-            </button>
+      <div className={styles.container}>
+        <div className={styles.innerBox}>
+          <h1 className={styles.heading}>Signup</h1>
+
+          <InputControls
+            label="Name"
+            placeholder="Enter your name"
+            value={userValues.name}
+            onChange={(e) => setUserValues((prev) => ({...prev, name: e.target.value}))}
+          />
+          <InputControls
+            label="Email"
+            placeholder="Enter email Address"
+            value={userValues.email}
+            onChange={(e) => setUserValues((prev) => ({...prev, email: e.target.value}))}
+          />
+          <InputControls
+            label="password"
+            placeholder="Enter Password"
+            value={userValues.password}
+            onChange={(e) => setUserValues((prev) => ({...prev, password: e.target.value}))}
+          />
+
+          <div className={styles.footer}>
+          <b className={styles.error}>{errMsg}</b>
+            <button onClick={handleSubmit}>Sign up</button>
+            <p>
+              Already have an account?{" "}
+              <span>
+                {" "}
+                <Link to="/login">Login</Link>
+              </span>
+            </p>
           </div>
-        </form>
+        </div>
       </div>
     </>
   );

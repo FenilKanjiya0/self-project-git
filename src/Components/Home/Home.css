@@ -1,0 +1,113 @@
+.nav {
+	position: fixed;
+	width: 100vw;
+	display: grid;
+	align-items: center;
+	padding: 1.5rem 2rem;
+
+	/* Individual value for the menu icon, then auto size the rest */
+	grid-template-columns: 60px repeat(2, auto);
+	grid-template-rows: repeat(2, auto);
+
+	/* This is the layout for the navbar in expanded mobile mode */
+	grid-template-areas:
+		"collapser brand"
+		"collapsable collapsable";
+
+	border-bottom: 1px solid #0005;
+}
+
+.nav__collapser {
+	grid-area: collapser;
+	width: 30px;
+}
+
+.nav__brand {
+	font-weight: bold;
+	font-size: 1.2rem;
+	grid-area: brand;
+}
+
+.nav__cta {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.nav__collapsable {
+	display: grid;
+	align-items: center;
+	gap: 1rem;
+	width: 100%;
+	grid-area: collapsable;
+
+	/* This is what hides the content */
+	overflow: hidden;
+	max-height: 0;
+
+	transition: padding 500ms ease, max-height 250ms ease;
+}
+
+.nav--expanded .nav__collapsable {
+	max-height: 500px; /* This is what shows the content */
+	margin-top: 1rem;
+	padding: 2rem 0;
+}
+
+/* Desktop mode styles */
+@media (min-width: 700px) {
+	.nav {
+		/* Layout for nav in desktop mode */
+		grid-template-columns: repeat(4, auto);
+		grid-template-areas: "brand . collapsable collapsable";
+	}
+
+	.nav__collapser {
+		display: none;
+	}
+
+	.nav__collapsable {
+		max-height: 500px;
+		display: flex;
+		justify-content: center;
+	}
+
+	.nav--expanded .nav__collapsable,
+	.nav__cta {
+		padding: 0;
+		margin: 0;
+	}
+
+	.nav__collapsable {
+		display: flex;
+		gap: 2rem;
+	}
+
+	.nav__cta {
+		margin-left: 1.5rem;
+	}
+}
+
+@media (min-width: 1000px) {
+	html {
+		font-size: 1.25rem;
+	}
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.cta {
+	font-size: 1.1rem;
+	border-radius: 2em;
+	padding: 0.5em 1em;
+	border: 1px solid #0005;
+}
+
+.cta--bold {
+	background-color: #333;
+	color: white;
+	font-weight: bold;
+}
