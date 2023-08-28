@@ -5,15 +5,21 @@ import {storage} from '../../firebase';
 
 const UploadPhotos = () => {
 
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState(null);
 
-    const upload = () => {
-        if(image == null)
+    const upload = async () => {
+      if (!image) {
         return;
-
-        const imageRef = ref(storage, `/images/${image.name}`); 
-        uploadBytes(imageRef)
-    }
+      }
+  
+      try {
+        const imageRef = ref(storage, `/images/${image.name}`);
+        await uploadBytes(imageRef, image);
+        alert('Image uploaded successfully!');
+      } catch (error) {
+        alert('Error uploading image:', error);
+      }
+    };
   return (
     <>
         <Home />
@@ -24,8 +30,7 @@ const UploadPhotos = () => {
         <br />
         <br />
 
-        <input type='file' onChange={(e) => setImage(e.target.files[0])} />
-
+        <input type="file" onChange={(e) => setImage(e.target.files[0])} />
         <button onClick={upload}>Upload Photos</button>
     </>
   )

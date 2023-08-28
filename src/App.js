@@ -8,10 +8,21 @@ import { useEffect, useState } from "react";
 
 import UploadPhotos from "./Components/UploadPhotos/UploadPhotos";
 import ShowPhotos from "./Components/ShowPhotos/ShowPhotos";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {auth} from './firebase'
 
 function App() {
   const [userName, setUserName] = useState("");
+  const [login, setLogin] = useState(false)
 
+  useEffect(() => {
+    let auth = getAuth()
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setLogin(true);
+      } else setLogin(false);
+    });
+  }, [auth]);
  
   return (
     <>
@@ -19,8 +30,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Ragistration />} />
         <Route path="/" element={<Home name={userName}/>} />
+        { login && 
+        <>
         <Route path="/uploadphotos" element={<UploadPhotos />} />
         <Route path="/showphotos" element={<ShowPhotos />} />
+        </>
+        }
       </Routes>
     </>
   );
