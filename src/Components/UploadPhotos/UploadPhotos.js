@@ -9,9 +9,9 @@ const UploadPhotos = () => {
 
     const upload = async () => {
       if (!image) {
+        alert("please choose any image")
         return;
       }
-  
       try {
         const imageRef = ref(storage, `/images/${image.name}`);
         await uploadBytes(imageRef, image);
